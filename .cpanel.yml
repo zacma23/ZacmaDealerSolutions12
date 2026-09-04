@@ -1,13 +1,12 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/username/public_html/zacma
-    - /bin/mkdir -p $DEPLOYPATH
+    # 1. Target directory (modify username if needed in cPanel)
+    - export DEPLOYPATH=/home/$USER/public_html
+    
+    # 2. Sync files to deployment path
     - /bin/cp -R * $DEPLOYPATH
-    - /bin/cp .env.production $DEPLOYPATH/.env
-    - cd $DEPLOYPATH
-    - /usr/local/bin/php artisan storage:link || true
-    - /usr/local/bin/php artisan config:cache
-    - /usr/local/bin/php artisan route:cache
-    - /usr/local/bin/php artisan view:cache
-    - /usr/local/bin/php artisan migrate --force
+    
+    # 3. Ensure permissions are set properly
+    - /bin/chmod -R 755 $DEPLOYPATH/storage
+    - /bin/chmod -R 755 $DEPLOYPATH/bootstrap/cache
