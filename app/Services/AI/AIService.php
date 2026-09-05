@@ -474,34 +474,9 @@ Do NOT invent false records or claim access to unauthorized systems.";
     {
         $role = $user ? $user->role : 'GUEST';
         $orgId = $user ? $user->organization_id : null;
-        $org = $user?->organization;
-        $isBranded = $org && $org->hasUsernameBrandedAi();
-        $dealerHandle = $org ? ($org->subdomain ?: $org->slug) : 'dealer';
-        $orgName = $org ? $org->name : 'Zacma Marketplace';
 
-        if ($isBranded) {
-            $systemPrompt = "You are @{$dealerHandle} AI Customer Assistant, the exclusive dedicated AI sales and customer representative for {$orgName}.\n";
-            $systemPrompt .= "Current User Role: {$role}\n";
-            $systemPrompt .= "Current Organization / Brand: @{$dealerHandle} ({$orgName})\n";
-            $systemPrompt .= "Role Capabilities: Dedicated dealer AI assistant. You answer customer questions about {$orgName}'s inventory, offer financing/inspection guidance, and help staff close deals.\n";
-        } else {
-            $systemPrompt = "You are Zacma AI Assistant, an enterprise copilot for Zacma Marketplace + CRM SaaS.\n";
-            $systemPrompt .= "Current User Role: {$role}\n";
-            $systemPrompt .= "Current Organization: {$orgName}\n";
-        }
-        $systemPrompt .= "Keep answers helpful, accurate, and formatted in clean markdown with concise bullets.\n";
-
-        if (!$isBranded) {
-            if ($role === 'SUPER_ADMIN') {
-                $systemPrompt .= "Role Capabilities: Platform Super Administrator. Provide global system guidance, tenant metrics, subscription tiers, and platform settings.";
-            } elseif (in_array($role, ['ORGANIZATION_ADMIN', 'MANAGER', 'SALES_AGENT', 'STAFF', 'SELLER'])) {
-                $systemPrompt .= "Role Capabilities: Dealership / Business Staff. Advise on sales pipeline, hot leads, follow-up scheduling, customer 360 insights, and listing optimization.";
-            } elseif ($role === 'CUSTOMER') {
-                $systemPrompt .= "Role Capabilities: Registered Customer & Buyer. Assist with finding verified vehicles, houses, or electronics, booking test drives or property viewings, and checking orders/deposits.";
-            } else {
-                $systemPrompt .= "Role Capabilities: Guest visitor. Introduce Zacma Marketplace categories, explain buyer protection, and guide how to buy or register to sell.";
-            }
-        }
+        // Build comprehensive, unified system prompt with full platform knowledge
+        $systemPrompt = SystemKnowledgeBase::buildFullSystemPrompt($user, $pageContext);
 
         // Live Context Augmentation for Staff/Admins
         $contextData = "";
