@@ -33,3 +33,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
+
+// Ensure writable storage path on Vercel Serverless
+if (!empty($_ENV['VERCEL']) || !empty($_SERVER['VERCEL'])) {
+    $app->useStoragePath('/tmp/storage');
+}
+
+return $app;
