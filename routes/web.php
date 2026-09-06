@@ -40,6 +40,7 @@ Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('che
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+Route::get('/login/quick/{role}', [AuthController::class, 'quickLogin'])->name('login.quick');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -115,7 +116,7 @@ Route::prefix('super-admin')->middleware(['auth', 'role:SUPER_ADMIN'])->group(fu
 });
 
 // Stop Impersonation (accessible by any logged-in user with active impersonator_id in session)
-Route::post('/super-admin/stop-impersonation', [SuperAdminController::class, 'stopImpersonation'])->middleware(['auth'])->name('super-admin.stop-impersonation');
+Route::match(['get', 'post'], '/super-admin/stop-impersonation', [SuperAdminController::class, 'stopImpersonation'])->middleware(['auth'])->name('super-admin.stop-impersonation');
 
 // ==========================================
 // DEALER / ORGANIZATION PORTAL

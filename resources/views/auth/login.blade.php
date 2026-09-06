@@ -48,7 +48,36 @@
             </button>
         </form>
 
-        <div class="pt-4 border-t border-slate-100 text-center text-xs text-slate-500">
+        <!-- Quick Portals Access -->
+        <div class="pt-4 border-t border-slate-100">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block text-center mb-2.5">
+                Instant 1-Click Access
+            </span>
+            <div class="grid grid-cols-2 gap-2">
+                <a href="{{ route('login.quick', 'super_admin') }}" class="p-2.5 bg-slate-900 hover:bg-black text-white rounded-xl text-center text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-sm col-span-2">
+                    <i class="fa-solid fa-crown text-amber-400"></i>
+                    <span>Super Admin Command Center</span>
+                </a>
+                <a href="{{ route('login.quick', 'dealer') }}" class="p-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-center text-xs font-semibold transition flex items-center justify-center space-x-1 border border-blue-200">
+                    <i class="fa-solid fa-car"></i>
+                    <span>Auto Dealer GM</span>
+                </a>
+                <a href="{{ route('login.quick', 'agent') }}" class="p-2 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-xl text-center text-xs font-semibold transition flex items-center justify-center space-x-1 border border-amber-200">
+                    <i class="fa-solid fa-id-badge"></i>
+                    <span>Sales Agent</span>
+                </a>
+                <a href="{{ route('login.quick', 'property') }}" class="p-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-center text-xs font-semibold transition flex items-center justify-center space-x-1 border border-emerald-200">
+                    <i class="fa-solid fa-building"></i>
+                    <span>Real Estate</span>
+                </a>
+                <a href="{{ route('login.quick', 'customer') }}" class="p-2 bg-teal-50 hover:bg-teal-100 text-teal-800 rounded-xl text-center text-xs font-semibold transition flex items-center justify-center space-x-1 border border-teal-200">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Customer Buyer</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 text-center text-xs text-slate-500">
             Don't have an account?
             <a href="{{ route('register') }}" class="font-semibold text-blue-600 hover:text-blue-800 ml-1">Create an account</a>
         </div>

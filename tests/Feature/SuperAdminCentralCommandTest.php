@@ -182,4 +182,12 @@ class SuperAdminCentralCommandTest extends TestCase
         $response->assertSessionHas('success');
         $this->assertTrue($this->dealerUser->fresh()->is_active);
     }
+
+    public function test_quick_login_authenticates_super_admin()
+    {
+        $response = $this->get(route('login.quick', 'super_admin'));
+        $response->assertRedirect(route('super-admin.dashboard'));
+        $this->assertTrue(auth()->check());
+        $this->assertTrue(auth()->user()->isSuperAdmin());
+    }
 }

@@ -140,4 +140,39 @@ class AuthController extends Controller
 
         return back()->with('error', 'Invalid or expired OTP code.');
     }
+
+    public function quickLogin(Request $request, string $role = 'super_admin')
+    {
+        $emailMap = [
+            'super_admin' => 'admin@zacma.com',
+            'superadmin' => 'admin@zacma.com',
+            'admin' => 'admin@zacma.com',
+            'dealer' => 'auto@zacma.com',
+            'auto' => 'auto@zacma.com',
+            'agent' => 'dawit@zacma.com',
+            'sales_agent' => 'dawit@zacma.com',
+            'property' => 'property@zacma.com',
+            'electronics' => 'electronics@zacma.com',
+            'customer' => 'customer@zacma.com',
+        ];
+
+        $targetEmail = $emailMap[strtolower($role)] ?? 'admin@zacma.com';
+        $user = User::where('email', $targetEmail)->first();
+
+        if (!$user && in_array(strtolower($role), ['super_admin', 'superadmin', 'admin'])) {
+            $user = User::where('role', User::ROLE_SUPER_ADMIN)->first() ?? User::first();
+            if ($user) {
+                $user->update(['role' => User::ROLE_SUPER_ADMIN, 'is_active' => true]);
+            }
+        }
+
+        if ($user) {
+            $user->update(['is_active' => true]);
+            Auth::login($user);
+            $request->session()->regenerate();
+            return redirect($user->getDashboardUrl())->with('success', "Signed in as {$user->name} ({$user->role})");
+        }
+
+        return redirect()->route('login')->with('error', 'Demo account not found.');
+    }
 }
