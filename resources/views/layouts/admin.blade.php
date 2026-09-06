@@ -22,13 +22,10 @@
                 <i class="fa-solid fa-user-secret text-base"></i>
                 <span><strong>Impersonation Active:</strong> Viewing platform as <strong>{{ Auth::user()->name }}</strong> ({{ Auth::user()->email }} &bull; Role: {{ Auth::user()->role }}).</span>
             </div>
-            <form method="POST" action="{{ route('super-admin.stop-impersonation') }}" class="inline">
-                @csrf
-                <button type="submit" class="bg-slate-950 hover:bg-black text-white px-3 py-1 rounded text-xs font-bold transition flex items-center space-x-1 shadow-sm">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    <span>Exit & Return to Super Admin</span>
-                </button>
-            </form>
+            <a href="{{ route('super-admin.stop-impersonation') }}" class="bg-slate-950 hover:bg-black text-white px-3 py-1 rounded text-xs font-bold transition flex items-center space-x-1 shadow-sm">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Exit & Return to Super Admin</span>
+            </a>
         </div>
     @endif
     <div class="flex-1 flex overflow-hidden">
