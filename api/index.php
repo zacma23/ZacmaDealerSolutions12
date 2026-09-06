@@ -13,6 +13,10 @@ putenv('APP_STORAGE=/tmp/storage');
 $_ENV['APP_STORAGE'] = '/tmp/storage';
 $_SERVER['APP_STORAGE'] = '/tmp/storage';
 
+putenv('LARAVEL_STORAGE_PATH=/tmp/storage');
+$_ENV['LARAVEL_STORAGE_PATH'] = '/tmp/storage';
+$_SERVER['LARAVEL_STORAGE_PATH'] = '/tmp/storage';
+
 putenv('LOG_CHANNEL=stderr');
 $_ENV['LOG_CHANNEL'] = 'stderr';
 $_SERVER['LOG_CHANNEL'] = 'stderr';
