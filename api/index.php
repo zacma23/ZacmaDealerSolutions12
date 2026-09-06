@@ -29,6 +29,10 @@ putenv('SESSION_DRIVER=cookie');
 $_ENV['SESSION_DRIVER'] = 'cookie';
 $_SERVER['SESSION_DRIVER'] = 'cookie';
 
+putenv('APP_MAINTENANCE_DRIVER=file');
+$_ENV['APP_MAINTENANCE_DRIVER'] = 'file';
+$_SERVER['APP_MAINTENANCE_DRIVER'] = 'file';
+
 // Prepare serverless writable paths in /tmp
 $dirs = [
     '/tmp/storage',
