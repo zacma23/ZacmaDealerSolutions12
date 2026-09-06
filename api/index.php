@@ -86,7 +86,7 @@ foreach ($dirs as $dir) {
 $dbConnection = getenv('DB_CONNECTION') ?: ($_ENV['DB_CONNECTION'] ?? 'sqlite');
 if ($dbConnection === 'sqlite') {
     $dbPath = '/tmp/database.sqlite';
-    if (!file_exists($dbPath)) {
+    if (!file_exists($dbPath) || filesize($dbPath) === 0) {
         $starter = __DIR__ . '/../database/starter.sqlite';
         if (file_exists($starter)) {
             copy($starter, $dbPath);
@@ -94,6 +94,7 @@ if ($dbConnection === 'sqlite') {
             touch($dbPath);
         }
     }
+    @chmod($dbPath, 0666);
     putenv("DB_DATABASE={$dbPath}");
     $_ENV['DB_DATABASE'] = $dbPath;
     $_SERVER['DB_DATABASE'] = $dbPath;

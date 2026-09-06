@@ -71,29 +71,39 @@ class AuthController extends Controller
             'organization_id' => 'nullable|exists:organizations,id',
         ]);
 
-        // Default tenant to active organization if on subdomain or first organization
-        $orgId = app()->has('current_organization_id')
-            ? app('current_organization_id')
-            : ($validated['organization_id'] ?? Organization::first()?->id);
+        try {
+            // Default tenant to active organization if on subdomain or first organization
+            $orgId = app()->has('current_organization_id')
+                ? app('current_organization_id')
+                : ($validated['organization_id'] ?? Organization::first()?->id);
 
-        $otp = rand(100000, 999999);
+            $otp = rand(100000, 999999);
 
-        $user = User::create([
-            'organization_id' => $orgId,
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'] ?? null,
-            'password' => Hash::make($validated['password']),
-            'role' => $validated['role'] ?? User::ROLE_CUSTOMER,
-            'otp_code' => $otp,
-            'otp_expires_at' => now()->addMinutes(15),
-            'is_active' => true,
-        ]);
+            $user = User::create([
+                'organization_id' => $orgId,
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'] ?? null,
+                'password' => Hash::make($validated['password']),
+                'role' => $validated['role'] ?? User::ROLE_CUSTOMER,
+                'otp_code' => $otp,
+                'otp_expires_at' => now()->addMinutes(15),
+                'is_active' => true,
+            ]);
 
-        Auth::login($user);
-        AuditLog::log('auth.register', $user, null, ['role' => $user->role], $user->organization_id, $user->id);
+            Auth::login($user);
 
-        return redirect($user->getDashboardUrl())->with('success', 'Registration successful! Welcome to Zacma.');
+            try {
+                AuditLog::log('auth.register', $user, null, ['role' => $user->role], $user->organization_id, $user->id);
+            } catch (\Throwable $logError) {
+                \Log::warning('AuditLog register: ' . $logError->getMessage());
+            }
+
+            return redirect($user->getDashboardUrl())->with('success', 'Registration successful! Welcome to Zacma.');
+        } catch (\Throwable $e) {
+            \Log::error('Register error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            return back()->withInput()->with('error', 'Registration error: ' . $e->getMessage());
+        }
     }
 
     public function logout(Request $request)
