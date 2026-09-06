@@ -34,9 +34,17 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })->create();
 
-// Ensure writable storage path on Vercel Serverless
-if (!empty($_ENV['VERCEL']) || !empty($_SERVER['VERCEL'])) {
-    $app->useStoragePath('/tmp/storage');
+// Ensure writable storage path on Vercel / AWS Lambda Serverless
+if (
+    !empty($_ENV['VERCEL']) ||
+    !empty($_SERVER['VERCEL']) ||
+    !empty($_ENV['NOW_REGION']) ||
+    !empty($_SERVER['NOW_REGION']) ||
+    !empty($_ENV['AWS_LAMBDA_FUNCTION_NAME']) ||
+    getenv('APP_STORAGE')
+) {
+    $storage = getenv('APP_STORAGE') ?: '/tmp/storage';
+    $app->useStoragePath($storage);
 }
 
 return $app;
