@@ -20,5 +20,22 @@ foreach ($dirs as $dir) {
     }
 }
 
+// Prepare SQLite database in /tmp if using SQLite
+$dbConnection = getenv('DB_CONNECTION') ?: ($_ENV['DB_CONNECTION'] ?? 'sqlite');
+if ($dbConnection === 'sqlite') {
+    $dbPath = '/tmp/database.sqlite';
+    if (!file_exists($dbPath)) {
+        $starter = __DIR__ . '/../database/starter.sqlite';
+        if (file_exists($starter)) {
+            copy($starter, $dbPath);
+        } else {
+            touch($dbPath);
+        }
+    }
+    putenv("DB_DATABASE={$dbPath}");
+    $_ENV['DB_DATABASE'] = $dbPath;
+    $_SERVER['DB_DATABASE'] = $dbPath;
+}
+
 // Forward to Laravel front controller
 require __DIR__ . '/../public/index.php';
