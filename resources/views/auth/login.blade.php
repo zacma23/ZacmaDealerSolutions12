@@ -13,6 +13,17 @@
 
         <form action="{{ route('login.submit') }}" method="POST" class="space-y-4">
             @csrf
+
+            @if ($errors->any())
+                <div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-xs space-y-1">
+                    @foreach ($errors->all() as $err)
+                        <div class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-exclamation text-rose-500"></i>
+                            <span>{{ $err }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
             <div>
                 <label class="text-xs font-semibold text-slate-700 block mb-1">Email or Phone Number</label>
                 <input type="text" name="login" value="{{ old('login') }}" required autofocus placeholder="admin@zacma.com or +251..." class="w-full text-xs border border-slate-300 rounded-xl p-3 outline-none focus:border-blue-600">

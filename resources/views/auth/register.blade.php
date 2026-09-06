@@ -13,6 +13,17 @@
 
         <form action="{{ route('register.submit') }}" method="POST" class="space-y-4">
             @csrf
+
+            @if ($errors->any())
+                <div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-xs space-y-1">
+                    @foreach ($errors->all() as $err)
+                        <div class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-exclamation text-rose-500"></i>
+                            <span>{{ $err }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
             <div>
                 <label class="text-xs font-semibold text-slate-700 block mb-1">Full Name</label>
                 <input type="text" name="name" value="{{ old('name') }}" required autofocus placeholder="John Doe" class="w-full text-xs border border-slate-300 rounded-xl p-3 outline-none focus:border-blue-600">
