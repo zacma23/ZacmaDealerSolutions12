@@ -15,9 +15,25 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="h-full flex overflow-hidden font-sans text-slate-800 antialiased" x-data="{ sidebarOpen: false }">
-    <!-- Mobile Sidebar Backdrop -->
-    <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"></div>
+<body class="h-full flex flex-col font-sans text-slate-800 antialiased" x-data="{ sidebarOpen: false }">
+    @if(session()->has('impersonator_id'))
+        <div class="bg-amber-500 text-slate-950 px-4 py-2 text-xs sm:text-sm font-semibold flex items-center justify-between shadow-md z-50 flex-shrink-0">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-user-secret text-base"></i>
+                <span><strong>Impersonation Active:</strong> Viewing platform as <strong>{{ Auth::user()->name }}</strong> ({{ Auth::user()->email }} &bull; Role: {{ Auth::user()->role }}).</span>
+            </div>
+            <form method="POST" action="{{ route('super-admin.stop-impersonation') }}" class="inline">
+                @csrf
+                <button type="submit" class="bg-slate-950 hover:bg-black text-white px-3 py-1 rounded text-xs font-bold transition flex items-center space-x-1 shadow-sm">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Exit & Return to Super Admin</span>
+                </button>
+            </form>
+        </div>
+    @endif
+    <div class="flex-1 flex overflow-hidden">
+        <!-- Mobile Sidebar Backdrop -->
+        <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"></div>
 
     <!-- Sidebar -->
     <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 flex flex-col transition-transform duration-200 ease-in-out lg:static lg:translate-x-0">
@@ -40,33 +56,77 @@
         <!-- Navigation Links -->
         <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
             @if(Auth::user()->isSuperAdmin())
-                <div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold px-3 py-1">Super Admin</div>
+                <div class="text-[11px] uppercase tracking-wider text-blue-400 font-bold px-3 py-1">Command Center</div>
                 <a href="{{ route('super-admin.dashboard') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.dashboard') ? 'bg-blue-600 text-white' : '' }}">
-                    <i class="fa-solid fa-chart-pie w-5"></i>
+                    <i class="fa-solid fa-gauge-high w-5"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('super-admin.organizations.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.organizations.*') ? 'bg-blue-600 text-white' : '' }}">
-                    <i class="fa-solid fa-building w-5"></i>
-                    <span>Organizations</span>
+                <a href="{{ route('super-admin.search') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.search') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-magnifying-glass w-5"></i>
+                    <span>Global Search</span>
+                </a>
+
+                <div class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold px-3 py-1 mt-3">Industry Sectors</div>
+                <a href="{{ route('super-admin.auto.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.auto.*') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-car w-5 text-blue-400"></i>
+                    <span>Auto / Vehicles</span>
+                </a>
+                <a href="{{ route('super-admin.property.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.property.*') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-building w-5 text-emerald-400"></i>
+                    <span>Real Estate</span>
+                </a>
+                <a href="{{ route('super-admin.electronics.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.electronics.*') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-laptop w-5 text-indigo-400"></i>
+                    <span>Electronics</span>
                 </a>
                 <a href="{{ route('super-admin.categories.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.categories.*') ? 'bg-blue-600 text-white' : '' }}">
                     <i class="fa-solid fa-layer-group w-5"></i>
                     <span>Dynamic Categories</span>
                 </a>
-                <a href="{{ route('super-admin.plans.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.plans.*') ? 'bg-blue-600 text-white' : '' }}">
-                    <i class="fa-solid fa-credit-card w-5"></i>
-                    <span>SaaS Plans & Limits</span>
+
+                <div class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold px-3 py-1 mt-3">Accounts & Roles</div>
+                <a href="{{ route('super-admin.organizations.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.organizations.*') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-building-user w-5"></i>
+                    <span>Dealerships / Tenants</span>
                 </a>
-                <a href="{{ route('super-admin.crm.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.crm.*') ? 'bg-blue-600 text-white' : '' }}">
-                    <i class="fa-solid fa-users w-5"></i>
-                    <span>Global CRM</span>
+                <a href="{{ route('super-admin.users.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.users.*') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-users-gear w-5"></i>
+                    <span>All Users & Roles</span>
                 </a>
+                <a href="{{ route('super-admin.customers.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.customers.*') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-user-tag w-5 text-teal-400"></i>
+                    <span>Customers</span>
+                </a>
+                <a href="{{ route('super-admin.sales-agents.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.sales-agents.*') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-id-badge w-5 text-amber-400"></i>
+                    <span>Sales Agents</span>
+                </a>
+
+                <div class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold px-3 py-1 mt-3">Commerce & CRM</div>
                 <a href="{{ route('super-admin.listings.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.listings.*') ? 'bg-blue-600 text-white' : '' }}">
                     <i class="fa-solid fa-tags w-5"></i>
-                    <span>Global Listings</span>
+                    <span>Listings Moderation</span>
+                </a>
+                <a href="{{ route('super-admin.orders.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.orders.*') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-receipt w-5 text-blue-400"></i>
+                    <span>Orders & Purchases</span>
+                </a>
+                <a href="{{ route('super-admin.payments.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.payments.*') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-credit-card w-5 text-emerald-400"></i>
+                    <span>Payments & Gateways</span>
+                </a>
+                <a href="{{ route('super-admin.crm.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.crm.*') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-fire w-5 text-amber-400"></i>
+                    <span>Global CRM</span>
+                </a>
+
+                <div class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold px-3 py-1 mt-3">Platform Control</div>
+                <a href="{{ route('super-admin.plans.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.plans.*') ? 'bg-blue-600 text-white' : '' }}">
+                    <i class="fa-solid fa-sliders w-5"></i>
+                    <span>SaaS Plans & Limits</span>
                 </a>
                 <a href="{{ route('super-admin.settings.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.settings.*') ? 'bg-blue-600 text-white' : '' }}">
-                    <i class="fa-solid fa-sliders w-5"></i>
+                    <i class="fa-solid fa-key w-5"></i>
                     <span>Integrations & Keys</span>
                 </a>
                 <a href="{{ route('super-admin.audit-logs.index') }}" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800 hover:text-white {{ request()->routeIs('super-admin.audit-logs.*') ? 'bg-blue-600 text-white' : '' }}">
@@ -163,6 +223,12 @@
             </div>
 
             <div class="flex items-center space-x-3">
+                @if(Auth::user()->isSuperAdmin())
+                    <a href="{{ route('super-admin.search') }}" class="hidden sm:flex items-center space-x-1.5 text-xs font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg px-3 py-1.5 transition">
+                        <i class="fa-solid fa-magnifying-glass text-[11px] text-slate-400"></i>
+                        <span>Global Search</span>
+                    </a>
+                @endif
                 <a href="{{ route('home') }}" target="_blank" class="text-xs font-semibold text-slate-600 hover:text-blue-600 flex items-center space-x-1 border border-slate-200 rounded-lg px-3 py-1.5">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                     <span>Public Marketplace</span>
@@ -196,6 +262,7 @@
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
             @yield('content')
         </main>
+    </div>
     </div>
 
     <!-- Universal Contextual AI Assistant Widget -->

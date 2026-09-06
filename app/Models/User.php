@@ -67,6 +67,11 @@ class User extends Authenticatable
         return $this->hasMany(Listing::class);
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
     public function assignedLeads(): HasMany
     {
         return $this->hasMany(Lead::class, 'assigned_user_id');

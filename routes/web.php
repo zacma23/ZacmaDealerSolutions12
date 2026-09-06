@@ -64,8 +64,30 @@ Route::middleware(['auth'])->group(function () {
 
 Route::prefix('super-admin')->middleware(['auth', 'role:SUPER_ADMIN'])->group(function () {
     Route::get('/', [SuperAdminController::class, 'dashboard'])->name('super-admin.dashboard');
-    
-    // Organizations
+    Route::get('/search', [SuperAdminController::class, 'search'])->name('super-admin.search');
+
+    // Industry Sectors
+    Route::get('/auto', [SuperAdminController::class, 'auto'])->name('super-admin.auto.index');
+    Route::get('/property', [SuperAdminController::class, 'property'])->name('super-admin.property.index');
+    Route::get('/electronics', [SuperAdminController::class, 'electronics'])->name('super-admin.electronics.index');
+
+    // Listings Management & Moderation
+    Route::get('/listings', [SuperAdminController::class, 'globalListings'])->name('super-admin.listings.index');
+    Route::post('/listings/{listing}/approve', [SuperAdminController::class, 'approveListing'])->name('super-admin.listings.approve');
+    Route::post('/listings/{listing}/reject', [SuperAdminController::class, 'rejectListing'])->name('super-admin.listings.reject');
+    Route::post('/listings/{listing}/toggle-feature', [SuperAdminController::class, 'toggleFeatureListing'])->name('super-admin.listings.toggle-feature');
+    Route::delete('/listings/{listing}', [SuperAdminController::class, 'destroyListing'])->name('super-admin.listings.destroy');
+
+    // Users & Accounts Management
+    Route::get('/users', [SuperAdminController::class, 'users'])->name('super-admin.users.index');
+    Route::post('/users/{user}/toggle', [SuperAdminController::class, 'toggleUserStatus'])->name('super-admin.users.toggle');
+    Route::get('/customers', [SuperAdminController::class, 'customers'])->name('super-admin.customers.index');
+    Route::get('/sales-agents', [SuperAdminController::class, 'salesAgents'])->name('super-admin.sales-agents.index');
+
+    // Impersonation / View As
+    Route::post('/impersonate/{user}', [SuperAdminController::class, 'impersonate'])->name('super-admin.impersonate');
+
+    // Organizations / Dealers
     Route::get('/organizations', [SuperAdminController::class, 'organizations'])->name('super-admin.organizations.index');
     Route::post('/organizations', [SuperAdminController::class, 'storeOrganization'])->name('super-admin.organizations.store');
     Route::post('/organizations/{organization}/toggle', [SuperAdminController::class, 'toggleOrganizationStatus'])->name('super-admin.organizations.toggle');
@@ -79,15 +101,21 @@ Route::prefix('super-admin')->middleware(['auth', 'role:SUPER_ADMIN'])->group(fu
     Route::get('/plans', [SuperAdminController::class, 'plans'])->name('super-admin.plans.index');
     Route::post('/plans', [SuperAdminController::class, 'storePlan'])->name('super-admin.plans.store');
 
-    // Global CRM & Listings
+    // CRM
     Route::get('/crm', [SuperAdminController::class, 'globalCrm'])->name('super-admin.crm.index');
-    Route::get('/listings', [SuperAdminController::class, 'globalListings'])->name('super-admin.listings.index');
+
+    // Sales & Finance
+    Route::get('/orders', [SuperAdminController::class, 'orders'])->name('super-admin.orders.index');
+    Route::get('/payments', [SuperAdminController::class, 'payments'])->name('super-admin.payments.index');
 
     // Platform Settings & Integrations
     Route::get('/settings', [SuperAdminController::class, 'settings'])->name('super-admin.settings.index');
     Route::post('/settings', [SuperAdminController::class, 'updateSettings'])->name('super-admin.settings.update');
     Route::get('/audit-logs', [SuperAdminController::class, 'auditLogs'])->name('super-admin.audit-logs.index');
 });
+
+// Stop Impersonation (accessible by any logged-in user with active impersonator_id in session)
+Route::post('/super-admin/stop-impersonation', [SuperAdminController::class, 'stopImpersonation'])->middleware(['auth'])->name('super-admin.stop-impersonation');
 
 // ==========================================
 // DEALER / ORGANIZATION PORTAL

@@ -19,6 +19,21 @@
     </style>
 </head>
 <body class="h-full flex flex-col font-sans text-slate-800 antialiased">
+    @if(session()->has('impersonator_id'))
+        <div class="bg-amber-500 text-slate-950 px-4 py-2 text-xs sm:text-sm font-semibold flex items-center justify-between shadow-md z-50 sticky top-0">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-user-secret text-base"></i>
+                <span><strong>Impersonation Active:</strong> Viewing platform as <strong>{{ Auth::user()->name }}</strong> ({{ Auth::user()->email }} &bull; Role: {{ Auth::user()->role }}).</span>
+            </div>
+            <form method="POST" action="{{ route('super-admin.stop-impersonation') }}" class="inline">
+                @csrf
+                <button type="submit" class="bg-slate-950 hover:bg-black text-white px-3 py-1 rounded text-xs font-bold transition flex items-center space-x-1 shadow-sm">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Exit & Return to Super Admin</span>
+                </button>
+            </form>
+        </div>
+    @endif
     <!-- Navbar -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40" x-data="{ mobileOpen: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
