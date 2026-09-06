@@ -41,7 +41,20 @@ class TenantResolverMiddleware
             view()->share('currentTenant', $tenant);
         }
 
-        return $next($request);
+        $response = $next($request);
+
+        // Expunge any legacy oversized cookies (40-char random session IDs from previous driver)
+        foreach ($request->cookies->keys() as $cookieName) {
+            if (strlen($cookieName) === 40 && !in_array($cookieName, ['zacma_session', 'XSRF-TOKEN'])) {
+                $response->headers->setCookie(
+                    new \Symfony\Component\HttpFoundation\Cookie(
+                        $cookieName, null, 1, '/', null, true, true, false, 'lax'
+                    )
+                );
+            }
+        }
+
+        return $response;
     }
 
     protected function extractSubdomain(string $host): ?string
