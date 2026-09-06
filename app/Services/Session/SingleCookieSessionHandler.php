@@ -3,31 +3,17 @@
 namespace App\Services\Session;
 
 use Illuminate\Contracts\Cookie\QueueingFactory as CookieJar;
-use Illuminate\Support\InteractsWithTime;
-use SessionHandlerInterface;
+use Illuminate\Session\CookieSessionHandler;
 use Symfony\Component\HttpFoundation\Request;
 
-class SingleCookieSessionHandler implements SessionHandlerInterface
+class SingleCookieSessionHandler extends CookieSessionHandler
 {
-    use InteractsWithTime;
-
-    protected CookieJar $cookie;
-    protected ?Request $request = null;
-    protected int $minutes;
-    protected bool $expireOnClose;
     protected string $cookieName;
 
     public function __construct(CookieJar $cookie, int $minutes, bool $expireOnClose = false, string $cookieName = 'zacma_session_data')
     {
-        $this->cookie = $cookie;
-        $this->minutes = $minutes;
-        $this->expireOnClose = $expireOnClose;
+        parent::__construct($cookie, $minutes, $expireOnClose);
         $this->cookieName = $cookieName;
-    }
-
-    public function setRequest(Request $request): void
-    {
-        $this->request = $request;
     }
 
     public function open($savePath, $sessionName): bool
@@ -47,6 +33,19 @@ class SingleCookieSessionHandler implements SessionHandlerInterface
             $value = $this->request->cookies->get($this->cookieName) ?: '';
         } elseif (isset($_COOKIE[$this->cookieName])) {
             $value = $_COOKIE[$this->cookieName];
+        }
+
+        if (empty($value)) {
+            return '';
+        }
+
+        // Decrypt if value is encrypted (does not start with JSON '{')
+        if (!str_starts_with($value, '{')) {
+            try {
+                $value = app('encrypter')->decrypt($value, false);
+            } catch (\Throwable $e) {
+                return '';
+            }
         }
 
         if (!empty($value) && !is_null($decoded = json_decode($value, true)) && is_array($decoded) &&
