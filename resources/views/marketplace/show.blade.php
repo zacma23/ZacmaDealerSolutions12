@@ -28,8 +28,8 @@
                 @if($listing->media->count() > 1)
                     <div class="p-4 flex space-x-3 overflow-x-auto border-t border-slate-100 bg-slate-50">
                         @foreach($listing->media as $m)
-                            <button @click="activeImg = '{{ asset('storage/' . $m->file_path) }}'" class="w-20 h-14 rounded-lg overflow-hidden border-2 focus:border-blue-600 flex-shrink-0 bg-white">
-                                <img src="{{ asset('storage/' . $m->file_path) }}" class="w-full h-full object-cover">
+                            <button @click="activeImg = '{{ $m->getUrl() }}'" class="w-20 h-14 rounded-lg overflow-hidden border-2 focus:border-blue-600 flex-shrink-0 bg-white">
+                                <img src="{{ $m->getUrl() }}" class="w-full h-full object-cover">
                             </button>
                         @endforeach
                     </div>

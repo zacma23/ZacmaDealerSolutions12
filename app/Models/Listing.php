@@ -126,8 +126,25 @@ class Listing extends Model
     {
         $primary = $this->primaryMedia ?? $this->media->first();
         if ($primary && $primary->file_path) {
+            if (str_starts_with($primary->file_path, 'http://') || str_starts_with($primary->file_path, 'https://')) {
+                return $primary->file_path;
+            }
             return asset('storage/' . $primary->file_path);
         }
-        return asset('images/placeholder.jpg');
+
+        $categoryPlaceholders = [
+            'vehicles' => 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80',
+            'property' => 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
+            'electronics' => 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80',
+            'machinery' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80',
+            'services' => 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80',
+        ];
+
+        $slug = $this->category?->slug;
+        if ($slug && isset($categoryPlaceholders[$slug])) {
+            return $categoryPlaceholders[$slug];
+        }
+
+        return 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80';
     }
 }

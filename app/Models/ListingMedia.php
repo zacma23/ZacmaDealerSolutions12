@@ -31,6 +31,9 @@ class ListingMedia extends Model
 
     public function getUrl(): string
     {
+        if (str_starts_with($this->file_path, 'http://') || str_starts_with($this->file_path, 'https://')) {
+            return $this->file_path;
+        }
         return asset('storage/' . $this->file_path);
     }
 }

@@ -308,7 +308,7 @@ class DatabaseSeeder extends Seeder
         $eRam = $electronicsCat->fields()->create(['name' => 'ram', 'label' => 'RAM Memory', 'field_type' => 'text', 'unit' => 'GB', 'is_filterable' => true, 'show_in_card' => true, 'sort_order' => 3]);
 
         // Category 4 & 5: Machinery & Services
-        Category::create([
+        $machineryCat = Category::create([
             'name' => 'Heavy Machinery & Agriculture',
             'slug' => 'machinery',
             'icon' => 'fa-solid fa-tractor',
@@ -317,7 +317,7 @@ class DatabaseSeeder extends Seeder
             'sort_order' => 4,
         ]);
 
-        Category::create([
+        $servicesCat = Category::create([
             'name' => 'Professional Services',
             'slug' => 'services',
             'icon' => 'fa-solid fa-briefcase',
@@ -431,6 +431,76 @@ class DatabaseSeeder extends Seeder
         ListingFieldValue::create(['listing_id' => $laptop1->id, 'category_field_id' => $eType->id, 'value' => 'Laptop']);
         ListingFieldValue::create(['listing_id' => $laptop1->id, 'category_field_id' => $eStorage->id, 'value' => '1000']);
         ListingFieldValue::create(['listing_id' => $laptop1->id, 'category_field_id' => $eRam->id, 'value' => '36']);
+
+        // Machinery Listing 1
+        $machinery1 = Listing::create([
+            'organization_id' => $autoOrg->id,
+            'user_id' => $autoAdmin->id,
+            'category_id' => $machineryCat->id,
+            'title' => '2022 Caterpillar 320D Hydraulic Excavator',
+            'slug' => '2022-caterpillar-320d-hydraulic-excavator',
+            'description' => 'Heavy-duty industrial excavator, 2,800 operating hours, CAT C7.1 ACERT engine, reinforced heavy-duty boom and bucket. Fully inspected and ready for immediate deployment on construction or mining projects.',
+            'price' => 14200000,
+            'currency' => 'ETB',
+            'price_type' => 'negotiable',
+            'city' => 'Addis Ababa',
+            'address' => 'Kality Heavy Equipment Yard',
+            'contact_phone' => '+251911123456',
+            'contact_email' => 'machinery@zacma-auto.com',
+            'status' => Listing::STATUS_PUBLISHED,
+            'approval_status' => 'approved',
+            'featured' => true,
+            'views_count' => 280,
+            'inquiries_count' => 14,
+        ]);
+
+        // Services Listing 1
+        $service1 = Listing::create([
+            'organization_id' => $autoOrg->id,
+            'user_id' => $autoAdmin->id,
+            'category_id' => $servicesCat->id,
+            'title' => 'Certified Fleet Audit & Vehicle Appraisal Services',
+            'slug' => 'certified-fleet-audit-and-vehicle-appraisal',
+            'description' => 'Comprehensive 150-point technical inspection, commercial vehicle fleet valuation, and mechanical diagnostic report for financial institutions, dealerships, and enterprise fleet managers.',
+            'price' => 45000,
+            'currency' => 'ETB',
+            'price_type' => 'fixed',
+            'city' => 'Addis Ababa',
+            'address' => 'Bole Sub-city, Addis Ababa',
+            'contact_phone' => '+251911123456',
+            'contact_email' => 'consulting@zacma.com',
+            'status' => Listing::STATUS_PUBLISHED,
+            'approval_status' => 'approved',
+            'featured' => false,
+            'views_count' => 160,
+            'inquiries_count' => 8,
+        ]);
+
+        // Listing Media (Photos with high-resolution imagery)
+        $listingMediaSeed = [
+            [$car1->id, 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80', 'land-cruiser-front.jpg', true],
+            [$car1->id, 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1200&q=80', 'land-cruiser-interior.jpg', false],
+            [$car2->id, 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80', 'hyundai-tucson-front.jpg', true],
+            [$car2->id, 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80', 'hyundai-tucson-side.jpg', false],
+            [$house1->id, 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80', 'penthouse-exterior.jpg', true],
+            [$house1->id, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80', 'penthouse-living.jpg', false],
+            [$laptop1->id, 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80', 'macbook-pro-16.jpg', true],
+            [$laptop1->id, 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=1200&q=80', 'macbook-pro-desk.jpg', false],
+            [$machinery1->id, 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1200&q=80', 'cat-excavator.jpg', true],
+            [$service1->id, 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80', 'fleet-audit-service.jpg', true],
+        ];
+
+        foreach ($listingMediaSeed as $mediaItem) {
+            ListingMedia::create([
+                'listing_id' => $mediaItem[0],
+                'file_path' => $mediaItem[1],
+                'original_filename' => $mediaItem[2],
+                'media_type' => 'image',
+                'file_size_kb' => 250,
+                'is_primary' => $mediaItem[3],
+                'sort_order' => 1,
+            ]);
+        }
 
         // 8. CRM Contacts & Leads
         // Contact 1
