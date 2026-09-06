@@ -33,6 +33,13 @@ putenv('APP_MAINTENANCE_DRIVER=file');
 $_ENV['APP_MAINTENANCE_DRIVER'] = 'file';
 $_SERVER['APP_MAINTENANCE_DRIVER'] = 'file';
 
+if (empty($_ENV['APP_KEY']) || empty(getenv('APP_KEY'))) {
+    $fallbackKey = 'base64:p7fVRPjNFEHr8eUHM9Mfsdd4Wl5XEsWkM5z8yvKI6l4=';
+    putenv("APP_KEY={$fallbackKey}");
+    $_ENV['APP_KEY'] = $fallbackKey;
+    $_SERVER['APP_KEY'] = $fallbackKey;
+}
+
 // Prepare serverless writable paths in /tmp
 $dirs = [
     '/tmp/storage',
