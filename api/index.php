@@ -25,9 +25,9 @@ putenv('CACHE_STORE=array');
 $_ENV['CACHE_STORE'] = 'array';
 $_SERVER['CACHE_STORE'] = 'array';
 
-putenv('SESSION_DRIVER=file');
-$_ENV['SESSION_DRIVER'] = 'file';
-$_SERVER['SESSION_DRIVER'] = 'file';
+putenv('SESSION_DRIVER=cookie');
+$_ENV['SESSION_DRIVER'] = 'cookie';
+$_SERVER['SESSION_DRIVER'] = 'cookie';
 
 putenv('SESSION_LIFETIME=120');
 $_ENV['SESSION_LIFETIME'] = '120';
