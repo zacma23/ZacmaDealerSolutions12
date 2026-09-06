@@ -40,6 +40,12 @@ if (empty($_ENV['APP_KEY']) || empty(getenv('APP_KEY'))) {
     $_SERVER['APP_KEY'] = $fallbackKey;
 }
 
+if (empty($_ENV['DB_CONNECTION']) || empty(getenv('DB_CONNECTION'))) {
+    putenv('DB_CONNECTION=sqlite');
+    $_ENV['DB_CONNECTION'] = 'sqlite';
+    $_SERVER['DB_CONNECTION'] = 'sqlite';
+}
+
 // Prepare serverless writable paths in /tmp
 $dirs = [
     '/tmp/storage',
