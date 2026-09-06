@@ -29,6 +29,23 @@ putenv('SESSION_DRIVER=cookie');
 $_ENV['SESSION_DRIVER'] = 'cookie';
 $_SERVER['SESSION_DRIVER'] = 'cookie';
 
+putenv('SESSION_LIFETIME=120');
+$_ENV['SESSION_LIFETIME'] = '120';
+$_SERVER['SESSION_LIFETIME'] = '120';
+
+putenv('SESSION_PATH=/');
+$_ENV['SESSION_PATH'] = '/';
+$_SERVER['SESSION_PATH'] = '/';
+
+putenv('SESSION_COOKIE=zacma_session');
+$_ENV['SESSION_COOKIE'] = 'zacma_session';
+$_SERVER['SESSION_COOKIE'] = 'zacma_session';
+
+if (isset($_ENV['SESSION_DOMAIN']) && trim((string)$_ENV['SESSION_DOMAIN']) === '') {
+    unset($_ENV['SESSION_DOMAIN'], $_SERVER['SESSION_DOMAIN']);
+    putenv('SESSION_DOMAIN');
+}
+
 putenv('APP_MAINTENANCE_DRIVER=file');
 $_ENV['APP_MAINTENANCE_DRIVER'] = 'file';
 $_SERVER['APP_MAINTENANCE_DRIVER'] = 'file';
